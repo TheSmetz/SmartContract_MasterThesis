@@ -13,7 +13,7 @@ int socket_desc, sock, clientLen, read_size;
 int BindCreatedSocket(int hSocket)
 {
     int iRetval = -1;
-    int ClientPort = 5555;
+    int ClientPort = 4444;
     struct sockaddr_in remote = {0};
     /* Internet address family */
     remote.sin_family = AF_INET;
@@ -26,7 +26,6 @@ int BindCreatedSocket(int hSocket)
 
 int run_server()
 {
-    
     char client_message[200] = {0};
     char message[100] = {0};
     const char *pMessage = "hello aticleworld.com";

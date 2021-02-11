@@ -10,9 +10,9 @@
 int SocketConnect(int hSocket)
 {
     int iRetval = -1;
-    int ServerPort = 4444;
+    int ServerPort = 5555;
     struct sockaddr_in remote = {0};
-    remote.sin_addr.s_addr = inet_addr("79.44.91.155"); //Local Host
+    remote.sin_addr.s_addr = inet_addr("79.55.191.44"); //Local Host
     remote.sin_family = AF_INET;
     remote.sin_port = htons(ServerPort);
     iRetval = connect(hSocket, (struct sockaddr *)&remote, sizeof(struct sockaddr_in));
