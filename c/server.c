@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-char lastMessage[200] = {0};
+char client_message[200] = {0};
 struct sockaddr_in server, client;
 int socket_desc, sock, clientLen, read_size;
 
@@ -26,7 +26,8 @@ int BindCreatedSocket(int hSocket)
 
 int run_server()
 {
-    char client_message[200] = {0};
+    
+
     char message[100] = {0};
     const char *pMessage = "hello aticleworld.com";
     //Create socket
@@ -71,7 +72,6 @@ int run_server()
         }
 
         //return client_message;
-        strncpy(lastMessage, client_message, 200);
 
         return 0;
     }

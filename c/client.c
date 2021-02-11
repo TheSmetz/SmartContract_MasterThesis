@@ -12,7 +12,7 @@ int SocketConnect(int hSocket)
     int iRetval = -1;
     int ServerPort = 5555;
     struct sockaddr_in remote = {0};
-    remote.sin_addr.s_addr = inet_addr("79.55.191.44"); //Local Host
+    remote.sin_addr.s_addr = inet_addr("192.168.1.45"); //Local Host
     remote.sin_family = AF_INET;
     remote.sin_port = htons(ServerPort);
     iRetval = connect(hSocket, (struct sockaddr *)&remote, sizeof(struct sockaddr_in));
@@ -72,16 +72,17 @@ int run_client()
         return 1;
     }
     printf("Sucessfully conected with server\n");
-    while (1)
-    {
+    //while (1)
+    //{
         printf("Enter the Message: ");
         gets(SendToServer);
         //Send data to the server
         SocketSend(hSocket, SendToServer, strlen(SendToServer));
         //Received the data from the server
-        read_size = SocketReceive(hSocket, server_reply, 200);
-    }
-    printf("Server Response : %s\n\n", server_reply);
+        //read_size = SocketReceive(hSocket, server_reply, 200);
+    //}
+    //printf("Server Response : %s\n\n", server_reply);
+    printf("Closing client");
     close(hSocket);
     shutdown(hSocket, 0);
     shutdown(hSocket, 1);
