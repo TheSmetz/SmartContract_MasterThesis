@@ -1,16 +1,15 @@
+#include "socket.h"
+#include "server.h"
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 
-short SocketCreate(void)
-{
-    short hSocket;
-    printf("Create the socket\n");
-    hSocket = socket(AF_INET, SOCK_STREAM, 0);
-    return hSocket;
-}
+char lastMessage[200] = {0};
+struct sockaddr_in server, client;
+int socket_desc, sock, clientLen, read_size;
+
 int BindCreatedSocket(int hSocket)
 {
     int iRetval = -1;
@@ -24,10 +23,10 @@ int BindCreatedSocket(int hSocket)
     iRetval = bind(hSocket, (struct sockaddr *)&remote, sizeof(remote));
     return iRetval;
 }
-int main(int argc, char *argv[])
+
+int run_server()
 {
-    int socket_desc, sock, clientLen, read_size;
-    struct sockaddr_in server, client;
+    
     char client_message[200] = {0};
     char message[100] = {0};
     const char *pMessage = "hello aticleworld.com";
@@ -59,9 +58,10 @@ int main(int argc, char *argv[])
         perror("accept failed");
         return 1;
     }
-    printf("Connection accepted\n");
-    while (1)
-    {
+    printf("Connection accepted.\n");
+    printf("Waiting for messages . . .\n");
+
+    while(1){
         memset(client_message, '\0', sizeof client_message);
         memset(message, '\0', sizeof message);
         //Receive a reply from the client
@@ -70,27 +70,15 @@ int main(int argc, char *argv[])
             printf("recv failed");
             break;
         }
-        printf("Client reply : %s\n", client_message);
-        if (strcmp(pMessage, client_message))
-        {
-            char SendToClient[100] = {0};
-            printf("Sucessfully conected with server\n");
-            printf("Enter the Message: ");
-            gets(SendToClient);
-            strcpy(message, SendToClient);
-        }
-        else
-        {
-            strcpy(message, "Invalid Message !");
-        }
-        // Send some data
-        if (send(sock, message, strlen(message), 0) < 0)
-        {
-            printf("Send failed");
-            return 1;
-        }
-        //close(sock);
-        sleep(1);
+
+        //return client_message;
+        strncpy(lastMessage, client_message, 200);
+
+        return 0;
     }
     return 0;
+}
+
+void close_server() {
+    close(socket_desc);
 }

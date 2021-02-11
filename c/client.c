@@ -1,31 +1,24 @@
+#include "socket.h"
+#include "client.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include "client.h"
-//Create a Socket for server communication
-short SocketCreate(void)
-{
-    short hSocket;
-    printf("Create the socket\n");
-    hSocket = socket(AF_INET, SOCK_STREAM, 0);
-    return hSocket;
-}
-//try to connect with server
+
 int SocketConnect(int hSocket)
 {
     int iRetval = -1;
-    int ServerPort = 5555;
+    int ServerPort = 4444;
     struct sockaddr_in remote = {0};
-    remote.sin_addr.s_addr = inet_addr("0.0.0.0"); //Local Host
+    remote.sin_addr.s_addr = inet_addr("79.44.91.155"); //Local Host
     remote.sin_family = AF_INET;
     remote.sin_port = htons(ServerPort);
     iRetval = connect(hSocket, (struct sockaddr *)&remote, sizeof(struct sockaddr_in));
     return iRetval;
 }
-// Send the data to the server and set the timeout of 20 seconds
+
 int SocketSend(int hSocket, char *Rqst, short lenRqst)
 {
     int shortRetval = -1;
@@ -40,7 +33,7 @@ int SocketSend(int hSocket, char *Rqst, short lenRqst)
     shortRetval = send(hSocket, Rqst, lenRqst, 0);
     return shortRetval;
 }
-//receive the data from the server
+
 int SocketReceive(int hSocket, char *Rsp, short RvcSize)
 {
     int shortRetval = -1;
@@ -59,7 +52,8 @@ int SocketReceive(int hSocket, char *Rsp, short RvcSize)
 
 int run_client()
 {
-    int hSocket, read_size;
+    int read_size;
+    short hSocket;
     struct sockaddr_in server;
     char SendToServer[100] = {0};
     char server_reply[200] = {0};
