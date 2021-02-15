@@ -14,7 +14,6 @@ def run_client(message):
     time.sleep(2)
 
 def run_server():
-    
     while True:
         conn, addr = serv.accept()
         from_client = ''

@@ -14,7 +14,7 @@ def run_client(message):
     time.sleep(2)
 
 def run_server():
-    
+    global init
     while True:
         conn, addr = serv.accept()
         from_client = ''
@@ -23,8 +23,8 @@ def run_server():
             if not data: break
             from_client += data
             if 'INIT' in from_client and init==False:
-                init=True
                 time.sleep(1)
+                init = True
                 x = threading.Thread(target=run_client, args=('INIT',))
                 x.start()
             else: break
