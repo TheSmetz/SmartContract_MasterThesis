@@ -25,10 +25,13 @@ public class Server {
     public void runServer() {
         try {
             this.serverSocket = new ServerSocket(this.port);
-            this.socket = this.serverSocket.accept();
-            this.out = new PrintWriter(this.socket.getOutputStream(), true);
-            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            validateMessage(this.in.readLine());
+            while(true){
+                this.socket = this.serverSocket.accept();
+                this.out = new PrintWriter(this.socket.getOutputStream(), true);
+                this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+                validateMessage(this.in.readLine());
+                this.socket.close();
+            }       
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -46,9 +49,18 @@ public class Server {
     }
 
     public void validateMessage(String message){
-        System.out.println(message);
+        int val = proofOfComputation(message);
+        System.out.println(val);
+        if(val==5){
+            stop();
+            return;
+        }
         this.client.runClient();
-        this.client.sendMessage(message);
+        this.client.sendMessage(String.valueOf(val));
         this.client.stopConnection();
+    }
+
+    public int proofOfComputation(String message){
+        return Integer.parseInt(message)+1;
     }
 }

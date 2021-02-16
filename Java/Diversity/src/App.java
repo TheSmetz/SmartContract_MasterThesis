@@ -6,6 +6,5 @@ public class App {
         Server s = new Server(1111);
         s.setClient(5555, "10.0.2.208");
         s.runServer();
-        s.stop();
     }
 }
