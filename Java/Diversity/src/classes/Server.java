@@ -29,6 +29,8 @@ public class Server {
                 this.socket = this.serverSocket.accept();
                 this.out = new PrintWriter(this.socket.getOutputStream(), true);
                 this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+                System.out.println("INET ADDRESS: "+this.socket.getInetAddress().toString());
+                System.out.println("Local Socket ADDRESS: "+this.socket.getLocalSocketAddress().toString());
                 validateMessage(this.in.readLine());
                 this.socket.close();
             }       
@@ -49,14 +51,16 @@ public class Server {
     }
 
     public void validateMessage(String message){
-        int val = proofOfComputation(message);
-        System.out.println(val);
-        if(val==5){
-            stop();
-            return;
-        }
+        //int val = proofOfComputation(message);
+        //System.out.println(val);
+        // if(val==5){
+        //     stop();
+        //     return;
+        // }
         this.client.runClient();
-        this.client.sendMessage(String.valueOf(val));
+        System.out.println("Message sent : " + message);
+        //System.out.println("Message GSON sent : " message.toJson());
+        this.client.sendMessage(String.valueOf(message));
         this.client.stopConnection();
     }
 

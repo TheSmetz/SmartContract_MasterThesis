@@ -40,6 +40,5 @@ public class Client {
         } catch (Exception e) {
             System.out.println("Error on closing client connection");
         }
-        
     }
 }
