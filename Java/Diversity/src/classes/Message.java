@@ -14,6 +14,15 @@ public class Message {
         this.payload = payload;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+            " author='" + getAuthor() + "'" +
+            ", message_type='" + getMessage_type() + "'" +
+            ", payload='" + getPayload() + "'" +
+            "}";
+    }
+
     public String getAuthor() {
         return this.author;
     }
@@ -38,7 +47,7 @@ public class Message {
         this.payload = payload;
     }
 
-    public String StringToJson(String msg) {
+    public static String StringToJson(Message msg) {
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
         Gson gson = builder.create();
@@ -46,7 +55,7 @@ public class Message {
         return msgJson;
     }
 
-    public Message JsonToString(String json) {
+    public static Message JsonToString(String json) {
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
         Gson gson = builder.create();
