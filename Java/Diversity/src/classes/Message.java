@@ -1,15 +1,18 @@
 package classes;
 
+import java.util.ArrayList;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Message {
-    private String author;
-    private String message_type;
+    //TODO
     private String payload;
+    private MessageType message_type;
 
-    public Message(String auth, String msg_type, String payload) {
-        this.author = auth;
+
+    
+    public Message(MessageType msg_type, String payload) {
         this.message_type = msg_type;
         this.payload = payload;
     }
@@ -17,25 +20,16 @@ public class Message {
     @Override
     public String toString() {
         return "{" +
-            " author='" + getAuthor() + "'" +
             ", message_type='" + getMessage_type() + "'" +
             ", payload='" + getPayload() + "'" +
             "}";
     }
 
-    public String getAuthor() {
-        return this.author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getMessage_type() {
+    public MessageType getMessage_type() {
         return this.message_type;
     }
 
-    public void setMessage_type(String message_type) {
+    public void setMessage_type(MessageType message_type) {
         this.message_type = message_type;
     }
 

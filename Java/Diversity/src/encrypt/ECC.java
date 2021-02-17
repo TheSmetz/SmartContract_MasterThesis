@@ -1,5 +1,6 @@
 package encrypt;
 
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.*;
 
@@ -53,9 +54,31 @@ public class ECC {
 			ecdsaVerify.initVerify(pubKey);
 			ecdsaVerify.update(data.getBytes());
 			return ecdsaVerify.verify(signature);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static String nonceGenerator() {
+		SecureRandom secureRandom = new SecureRandom();
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int i = 0; i < 15; i++) {
+			stringBuilder.append(secureRandom.nextInt(10));
+		}
+		String randomNumber = stringBuilder.toString();
+		return randomNumber;
+	}
+
+	public static byte[] hashString(String s) {
+		MessageDigest digest;
+		byte[] hash = {};
+		try {
+			digest = MessageDigest.getInstance("SHA-256");
+			hash = digest.digest(s.getBytes(StandardCharsets.UTF_8));
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return hash;
 	}
 
 }
