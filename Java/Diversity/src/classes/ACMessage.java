@@ -1,5 +1,5 @@
 package classes;
 
-public class ACMessage {
+public class ACMessage implements MessageContent{
     
 }

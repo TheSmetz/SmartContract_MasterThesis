@@ -5,7 +5,7 @@ import encrypt.ECC;
 //TODO W at time t
 //S = nounce (fresh random secret)
 //Message = Hash(f(W[t]) || S(t,i) || IDi) || Contratto || t || H(W[t])
-public class pocMessage {
+public class pocMessage implements MessageContent{
     private int id;
     private Integer[] w;
     private int t;      //time
