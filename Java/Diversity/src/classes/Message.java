@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Message {
-    private String payload;
+    private MessageContent payload;
     private MessageType message_type;
 
-    public Message(MessageType msg_type, String payload) {
+    public Message(MessageType msg_type, MessageContent payload) {
         this.message_type = msg_type;
         this.payload = payload;
     }
@@ -28,11 +28,11 @@ public class Message {
         this.message_type = message_type;
     }
 
-    public String getPayload() {
+    public MessageContent getPayload() {
         return this.payload;
     }
 
-    public void setPayload(String payload) {
+    public void setPayload(MessageContent payload) {
         this.payload = payload;
     }
 
