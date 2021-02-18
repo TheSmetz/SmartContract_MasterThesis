@@ -1,5 +1,8 @@
 package encrypt;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.*;
@@ -79,5 +82,39 @@ public class ECC {
 			e.printStackTrace();
 		}
 		return hash;
+	}
+
+	private static <T> byte[] toByte(T object) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream out = null;
+		byte[] res = {};
+		try {
+			out = new ObjectOutputStream(bos);
+			out.writeObject(object);
+			out.flush();
+			res = bos.toByteArray();
+		} catch (Exception e) {
+
+		} finally {
+			try {
+				bos.close();
+			} catch (IOException ex) {
+				// ignore close exception
+			}
+		}
+		return res;
+	}
+
+	public static <T> byte[] hash(T object) {
+		byte[] digest = {};
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			md.update(toByte(object));
+			digest = md.digest();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return digest;
 	}
 }

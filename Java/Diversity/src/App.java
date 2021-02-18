@@ -2,6 +2,7 @@ import java.security.Security;
 
 import classes.*;
 import encrypt.ECC;
+import encrypt.JSONConverter;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -10,26 +11,27 @@ public class App {
         // s.runServer();
 
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        // ECC.generateKeyPair();
-        // byte[] signature = ECC.encrypt("CIAO");
-        // System.out.println(signature);
-        // boolean res = ECC.verify(ECC.getPublicKey(), signature, "CIAO");
-        // System.out.println(res);
 
-        Message msg = new Message(MessageType.INIT,new MessageContent(){});
+        Integer[] w = {1,2,3};
+        POC p = new POC(1,w,3,new Contract());
+        String input = JSONConverter.toJSON(p);
+        p = new POC(2,w,3,new Contract());
+        ECC.generateKeyPair();
+        Message m = new Message(MessageType.PoC, new POCMessage(ECC.getPublicKey(), ECC.encrypt(input), p));
 
-        String s = JSONConverter.toJSON(msg);
-        System.out.println(s);
-        Message m = JSONConverter.toObject(s, Message.class);
-        System.out.println(m.toString());
-
-
-
-        // String json = Message.StringToJson(msg);
-        // System.out.println(Message.JsonToString(json));
-        // Contract c = new Contract();
-        // Integer[] v = {1,2,3};
-        // pocMessage p = new pocMessage(1, v, 3, c);
-        // System.out.println(p.generatePoCMessage());
+        switch (m.getmessageType()) {
+            case INIT:
+                System.out.println("INIT");
+                break;
+            
+            case PoC:
+                if(m.getPayload() instanceof POCMessage){
+                    POCMessage content = (POCMessage) m.getPayload();
+                    System.out.println(content.verify());
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -13,6 +13,7 @@ public class ACMessage implements MessageContent{
 
     public String generateACMessage(){
         //TODO
+        return "";
     }
 
 }

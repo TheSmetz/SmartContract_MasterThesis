@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.io.InputStreamReader;
 import java.net.*;
 
+import encrypt.JSONConverter;
+
 public class Server {
 
     private int port;
@@ -64,8 +66,8 @@ public class Server {
                 break;
         
             case PoC:
-                if(message.getPayload() instanceof pocMessage){
-                    pocMessage content = (pocMessage) message.getPayload();
+                if(message.getPayload() instanceof POCMessage){
+                    POCMessage content = (POCMessage) message.getPayload();
                     content.verify();
                 }
                 break;
