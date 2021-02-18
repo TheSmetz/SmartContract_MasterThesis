@@ -26,4 +26,9 @@ public class pocMessage implements MessageContent{
         String secondPart = this.aContract.getContract() + " " + this.t + " " + this.w.hashCode();
         return firstPart.toString() + " " + secondPart;
     }
+
+    public boolean verify(){
+
+        return true;
+    }
 }

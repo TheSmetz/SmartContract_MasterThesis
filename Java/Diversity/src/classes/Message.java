@@ -1,31 +1,28 @@
 package classes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 public class Message {
     private MessageContent payload;
-    private MessageType message_type;
+    private MessageType messageType;
 
-    public Message(MessageType msg_type, MessageContent payload) {
-        this.message_type = msg_type;
+    public Message(MessageType messageType, MessageContent payload) {
+        this.messageType = messageType;
         this.payload = payload;
     }
 
-    @Override
-    public String toString() {
-        return "{" +
-            ", message_type='" + getMessage_type() + "'" +
-            ", payload='" + getPayload() + "'" +
-            "}";
+    // @Override
+    // public String toString() {
+    //     return "{" +
+    //         ", messageType='" + getmessageType() + "'" +
+    //         ", payload='" + getPayload() + "'" +
+    //         "}";
+    // }
+
+    public MessageType getmessageType() {
+        return this.messageType;
     }
 
-    public MessageType getMessage_type() {
-        return this.message_type;
-    }
-
-    public void setMessage_type(MessageType message_type) {
-        this.message_type = message_type;
+    public void setmessageType(MessageType messageType) {
+        this.messageType = messageType;
     }
 
     public MessageContent getPayload() {
@@ -36,19 +33,5 @@ public class Message {
         this.payload = payload;
     }
 
-    public static String StringToJson(Message msg) {
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        Gson gson = builder.create();
-        String msgJson = gson.toJson(msg);
-        return msgJson;
-    }
-
-    public static Message JsonToString(String json) {
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        Gson gson = builder.create();
-        Message msgObject = gson.fromJson(json, Message.class);
-        return msgObject;
-    }
+    
 }

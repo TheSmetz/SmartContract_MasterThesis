@@ -16,12 +16,20 @@ public class App {
         // boolean res = ECC.verify(ECC.getPublicKey(), signature, "CIAO");
         // System.out.println(res);
 
-        // Message msg = new Message("auth","type","pld");
+        Message msg = new Message(MessageType.INIT,new MessageContent(){});
+
+        String s = JSONConverter.toJSON(msg);
+        System.out.println(s);
+        Message m = JSONConverter.toObject(s, Message.class);
+        System.out.println(m.toString());
+
+
+
         // String json = Message.StringToJson(msg);
         // System.out.println(Message.JsonToString(json));
-        Contract c = new Contract();
-        Integer[] v = {1,2,3};
-        pocMessage p = new pocMessage(1, v, 3, c);
-        System.out.println(p.generatePoCMessage());
+        // Contract c = new Contract();
+        // Integer[] v = {1,2,3};
+        // pocMessage p = new pocMessage(1, v, 3, c);
+        // System.out.println(p.generatePoCMessage());
     }
 }

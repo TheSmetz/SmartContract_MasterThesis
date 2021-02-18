@@ -11,6 +11,7 @@ public class Server {
     private ServerSocket serverSocket;
     private Socket socket;
     private Client client;
+    private Contract contract;
     private PrintWriter out;
     private BufferedReader in;
 
@@ -31,7 +32,9 @@ public class Server {
                 this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
                 System.out.println("INET ADDRESS: "+this.socket.getInetAddress().toString());
                 System.out.println("Local Socket ADDRESS: "+this.socket.getLocalSocketAddress().toString());
-                validateMessage(this.in.readLine());
+                //Otteniamo il messaggio e lo convertiamo
+                Message m = JSONConverter.toObject(this.in.readLine(), Message.class);
+                validateMessage(m);
                 this.socket.close();
             }       
         } catch (Exception e) {
@@ -50,13 +53,39 @@ public class Server {
         }
     }
 
-    public void validateMessage(String message){
-        //int val = proofOfComputation(message);
-        //System.out.println(val);
-        // if(val==5){
-        //     stop();
-        //     return;
-        // }
+    public void validateMessage(Message message){
+        switch (message.getmessageType()) {
+            case INIT:
+                //Download contract
+                if(message.getPayload() instanceof InitMessage){
+                    InitMessage content = (InitMessage) message.getPayload();
+                    this.contract = content.getContract();
+                }
+                break;
+        
+            case PoC:
+                if(message.getPayload() instanceof pocMessage){
+                    pocMessage content = (pocMessage) message.getPayload();
+                    content.verify();
+                }
+                break;
+
+            case AC:
+                if(message.getPayload() instanceof ACMessage){
+                    ACMessage content = (ACMessage) message.getPayload();
+                }
+                break;
+
+            case ScU:
+                if(message.getPayload() instanceof ScUMessage){
+                    ScUMessage content = (ScUMessage) message.getPayload();
+                }
+                break;
+            default:
+                System.out.println("Type not recognized");
+                break;
+        }
+
         this.client.runClient();
         System.out.println("Message sent : " + message);
         //System.out.println("Message GSON sent : " message.toJson());
