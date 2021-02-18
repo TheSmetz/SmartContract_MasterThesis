@@ -1,9 +1,6 @@
 import java.security.Security;
 
-import classes.Contract;
-import classes.Message;
-import classes.Server;
-import classes.pocMessage;
+import classes.*;
 import encrypt.ECC;
 
 public class App {

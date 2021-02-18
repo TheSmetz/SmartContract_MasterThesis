@@ -1,8 +1,6 @@
 package classes;
 
-import java.util.Random;
 import encrypt.ECC;
-import java.security.SecureRandom;
 
 //TODO W at time t
 //S = nounce (fresh random secret)
@@ -13,7 +11,6 @@ public class pocMessage {
     private int t;      //time
     private String nounce; // S(t,i)
     private Contract aContract;
-
 
     public pocMessage(int id, Integer[] w, int t, Contract aContract) {
         this.id = id;

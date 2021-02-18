@@ -1,17 +1,12 @@
 package classes;
 
-import java.util.ArrayList;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Message {
-    //TODO
     private String payload;
     private MessageType message_type;
 
-
-    
     public Message(MessageType msg_type, String payload) {
         this.message_type = msg_type;
         this.payload = payload;
