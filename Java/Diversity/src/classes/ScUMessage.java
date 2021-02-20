@@ -1,5 +1,5 @@
 package classes;
 
-public class ScUMessage implements MessageContent{
+public class ScUMessage extends MessageContent{
     
 }

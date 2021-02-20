@@ -3,9 +3,18 @@ package encrypt;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.*;
+import java.util.Base64;
+
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.ECPointUtil;
+import org.bouncycastle.jce.interfaces.ECPublicKey;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 
 public class ECC {
 
@@ -112,9 +121,35 @@ public class ECC {
 			md.update(toByte(object));
 			digest = md.digest();
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return digest;
+	}
+
+	public static PublicKey getPublicKeyFromBytes(byte[] pubKey) {
+		X509EncodedKeySpec ks = new X509EncodedKeySpec(pubKey);
+        KeyFactory kf;
+        try {
+            kf = java.security.KeyFactory.getInstance("ECDSA","BC");
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Algorithm error" + e);
+            return null;
+        } catch (NoSuchProviderException e) {
+			System.out.println("No provider" + e);
+			return null;
+		}
+
+        ECPublicKey remotePublicKey;
+
+        try {
+            remotePublicKey = (ECPublicKey)kf.generatePublic(ks);
+        } catch (InvalidKeySpecException e) {
+            System.out.println("Received invalid key specification from client "+e);
+            return null;
+        } catch (ClassCastException e) {
+            System.out.println("Received valid X.509 key from client but it was not EC Public Key material "+e);
+            return null;
+        }
+		return remotePublicKey;
 	}
 }

@@ -1,6 +1,6 @@
 package classes;
 
-public class ACMessage implements MessageContent{
+public class ACMessage extends MessageContent{
     public int t;      //time
     public Integer[] w;
     public String nounce; // S(t,i)

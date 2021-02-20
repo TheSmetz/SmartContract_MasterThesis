@@ -4,13 +4,12 @@ import org.bouncycastle.jce.provider.*;
 import classes.*;
 import encrypt.ECC;
 
-public class App {
+public class App2 {
     public static void main(String[] args) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         ECC.generateKeyPair();
 
-        Server s = new Server(4444);
-        s.setClient(3333, "127.0.0.1");
+        Server s = new Server(3333);
         s.runServer();
     }
 }

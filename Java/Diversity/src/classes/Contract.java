@@ -22,6 +22,6 @@ public class Contract {
     }
 
     public String getContract(){
-        return JSONConverter.toJSON(this);
+        return JSONConverter.toJSON(this, Contract.class);
     }
 }

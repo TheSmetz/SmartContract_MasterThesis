@@ -1,12 +1,15 @@
 package classes;
 
-public class InitMessage implements MessageContent{
+public class InitMessage extends MessageContent{
     
     private Contract contract;
 
-    public InitMessage(){}
+    public InitMessage(){
+        this.contract = new Contract();
+    }
 
     public Contract getContract(){
+        this.contract = new Contract();
         return this.contract;
     }
 }

@@ -1,19 +1,23 @@
 package classes;
 
-public class Message {
-    private MessageContent payload;
+public class Message<T extends MessageContent> {
     private MessageType messageType;
+    private T messageContent;
 
-    public Message(MessageType messageType, MessageContent payload) {
+    public Message(){
+        
+    }
+
+    public Message(MessageType messageType, T messageContent) {
         this.messageType = messageType;
-        this.payload = payload;
+        this.messageContent = messageContent;
     }
 
     // @Override
     // public String toString() {
     //     return "{" +
     //         ", messageType='" + getmessageType() + "'" +
-    //         ", payload='" + getPayload() + "'" +
+    //         ", messageContent='" + getmessageContent() + "'" +
     //         "}";
     // }
 
@@ -25,13 +29,11 @@ public class Message {
         this.messageType = messageType;
     }
 
-    public MessageContent getPayload() {
-        return this.payload;
+    public T getmessageContent() {
+        return this.messageContent;
     }
 
-    public void setPayload(MessageContent payload) {
-        this.payload = payload;
+    public void setmessageContent(T messageContent) {
+        this.messageContent = messageContent;
     }
-
-    
 }

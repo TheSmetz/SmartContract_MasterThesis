@@ -21,6 +21,7 @@ public class Client {
             this.out = new PrintWriter(clientSocket.getOutputStream(), true);
         } catch (Exception e) {
             System.out.println("Error on running client");
+            System.out.println(e);
         }
     }
 

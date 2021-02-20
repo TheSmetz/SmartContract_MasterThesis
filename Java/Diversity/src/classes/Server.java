@@ -2,8 +2,11 @@ package classes;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.io.InputStreamReader;
 import java.net.*;
+
+import com.google.gson.reflect.TypeToken;
 
 import encrypt.JSONConverter;
 
@@ -32,11 +35,10 @@ public class Server {
                 this.socket = this.serverSocket.accept();
                 this.out = new PrintWriter(this.socket.getOutputStream(), true);
                 this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-                System.out.println("INET ADDRESS: "+this.socket.getInetAddress().toString());
-                System.out.println("Local Socket ADDRESS: "+this.socket.getLocalSocketAddress().toString());
                 //Otteniamo il messaggio e lo convertiamo
-                Message m = JSONConverter.toObject(this.in.readLine(), Message.class);
-                validateMessage(m);
+                System.out.println("Converting message into object..");
+                String msgString = this.in.readLine();
+                validateMessage(msgString);
                 this.socket.close();
             }       
         } catch (Exception e) {
@@ -55,47 +57,65 @@ public class Server {
         }
     }
 
-    public void validateMessage(Message message){
-        switch (message.getmessageType()) {
+    public void validateMessage(String message){
+
+        GenericMessage m = JSONConverter.toObject(message, GenericMessage.class);
+        Type msgType;
+
+        switch (m.getmessageType()) {
             case INIT:
                 //Download contract
-                if(message.getPayload() instanceof InitMessage){
-                    InitMessage content = (InitMessage) message.getPayload();
+                msgType = new TypeToken<Message<InitMessage>>() {}.getType();
+                Message<InitMessage> initMessage = JSONConverter.toObject(message, msgType);
+                if(initMessage.getmessageContent() instanceof InitMessage){
+                    InitMessage content = initMessage.getmessageContent();
                     this.contract = content.getContract();
+                    POCMessage pocMsg = new POCMessage();
+                    Integer[] w = {1,2,3};
+                    pocMsg.generate(port, w, 3, this.contract);
+                    sendMessage(new Message<POCMessage>(MessageType.PoC, pocMsg));
                 }
                 break;
         
             case PoC:
-                if(message.getPayload() instanceof POCMessage){
-                    POCMessage content = (POCMessage) message.getPayload();
-                    content.verify();
+                msgType = new TypeToken<Message<POCMessage>>() {}.getType();
+                Message<POCMessage> pocMessage = JSONConverter.toObject(message, msgType);
+                if(pocMessage.getmessageContent() instanceof POCMessage){
+                    POCMessage content = pocMessage.getmessageContent();
+                    System.out.println(content.verify());
                 }
                 break;
 
             case AC:
-                if(message.getPayload() instanceof ACMessage){
-                    ACMessage content = (ACMessage) message.getPayload();
+                msgType = new TypeToken<Message<ACMessage>>() {}.getType();
+                Message<ACMessage> acMessage = JSONConverter.toObject(message, msgType);
+                if(acMessage.getmessageContent() instanceof ACMessage){
+                    ACMessage content = acMessage.getmessageContent();
                 }
                 break;
 
             case ScU:
-                if(message.getPayload() instanceof ScUMessage){
-                    ScUMessage content = (ScUMessage) message.getPayload();
+                msgType = new TypeToken<Message<ScUMessage>>() {}.getType();
+                Message<ScUMessage> scuMessage = JSONConverter.toObject(message, msgType);
+                if(scuMessage.getmessageContent() instanceof ScUMessage){
+                    ScUMessage content = scuMessage.getmessageContent();
                 }
                 break;
             default:
                 System.out.println("Type not recognized");
                 break;
         }
-
-        this.client.runClient();
-        System.out.println("Message sent : " + message);
-        //System.out.println("Message GSON sent : " message.toJson());
-        this.client.sendMessage(String.valueOf(message));
-        this.client.stopConnection();
     }
 
     public int proofOfComputation(String message){
         return Integer.parseInt(message)+1;
     }
+
+    private void sendMessage(Message<POCMessage> msg){
+        this.client.runClient();
+        System.out.println("Message sent : " + JSONConverter.toJSON(msg));
+        this.client.sendMessage(JSONConverter.toJSON(msg));
+        this.client.stopConnection();
+    }
+
 }

@@ -1,5 +1,5 @@
 package classes;
 
-public interface MessageContent {
-    
+public class MessageContent {
+    public MessageContent(){}
 }
