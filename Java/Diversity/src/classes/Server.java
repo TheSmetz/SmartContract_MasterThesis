@@ -82,7 +82,16 @@ public class Server {
                 Message<POCMessage> pocMessage = JSONConverter.toObject(message, msgType);
                 if(pocMessage.getmessageContent() instanceof POCMessage){
                     POCMessage content = pocMessage.getmessageContent();
-                    System.out.println(content.verify());
+                    if (content.verify()){
+                        if(content.getContent().getId() != this.port){
+                            //TODO: firma
+                            System.out.println("DA FIRMARE");
+                        } else {
+                            System.out.println("Mia firma");
+                        }
+                    }else{
+                        System.err.println("Error on validate signature PoC");
+                    }
                 }
                 break;
 

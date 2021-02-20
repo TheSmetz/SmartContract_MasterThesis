@@ -20,6 +20,10 @@ public class POC {
         this.aContract = aContract;
     }
 
+    public int getId(){
+        return this.id;
+    }
+
     public void init() {
         this.firstPart = this.generateFirstPart();
         this.secondPart = this.generateSecondPart();

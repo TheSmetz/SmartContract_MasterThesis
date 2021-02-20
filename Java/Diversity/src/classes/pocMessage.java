@@ -18,6 +18,10 @@ public class POCMessage extends MessageContent{
         this.content = content;
     }
 
+    public POC getContent(){
+        return this.content;
+    }
+
     public boolean verify() {
         PublicKey pk = ECC.getPublicKeyFromBytes(publicKeySender);
         return ECC.verify(pk, this.signedMessage, JSONConverter.toJSON(content, POC.class));
