@@ -132,10 +132,10 @@ public class ECC {
         try {
             kf = java.security.KeyFactory.getInstance("ECDSA","BC");
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Algorithm error" + e);
+            System.err.println("Algorithm error" + e);
             return null;
         } catch (NoSuchProviderException e) {
-			System.out.println("No provider" + e);
+			System.err.println("No provider" + e);
 			return null;
 		}
 
@@ -144,10 +144,10 @@ public class ECC {
         try {
             remotePublicKey = (ECPublicKey)kf.generatePublic(ks);
         } catch (InvalidKeySpecException e) {
-            System.out.println("Received invalid key specification from client "+e);
+            System.err.println("Received invalid key specification from client "+e);
             return null;
         } catch (ClassCastException e) {
-            System.out.println("Received valid X.509 key from client but it was not EC Public Key material "+e);
+            System.err.println("Received valid X.509 key from client but it was not EC Public Key material "+e);
             return null;
         }
 		return remotePublicKey;

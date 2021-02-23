@@ -3,6 +3,8 @@ package classes;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import common.Ansi;
+
 public class Client {
     
     private int port;
@@ -15,22 +17,25 @@ public class Client {
         this.ip = ip;
     }
 
-    public void runClient() {
+    public boolean runClient() {
         try {
             this.clientSocket = new Socket(this.ip, this.port);
             this.out = new PrintWriter(clientSocket.getOutputStream(), true);
+            return true;
         } catch (Exception e) {
-            System.out.println("Error on running client");
-            System.out.println(e);
+            System.err.println(Ansi.ANSI_RED+"Error on running client"+Ansi.ANSI_RESET);
+            return false;
         }
     }
 
-    public void sendMessage(String msg) {
+    public boolean sendMessage(String msg) {
         try {
             this.out.write(msg);
             this.out.flush();
+            return true;
         } catch (Exception e) {
-            System.out.println("Error on sending message to client");
+            System.err.println(Ansi.ANSI_RED+"Error on sending message to client"+Ansi.ANSI_RESET);
+            return false;
         }
     }
 
@@ -39,7 +44,7 @@ public class Client {
             this.out.close();
             this.clientSocket.close();
         } catch (Exception e) {
-            System.out.println("Error on closing client connection");
+            System.err.println(Ansi.ANSI_RED+"Error on closing client connection"+Ansi.ANSI_RESET);
         }
     }
 }

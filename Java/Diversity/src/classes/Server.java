@@ -1,13 +1,17 @@
 package classes;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
-import java.io.InputStreamReader;
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import com.google.gson.reflect.TypeToken;
 
+import common.Ansi;
 import encrypt.JSONConverter;
 
 public class Server {
@@ -29,8 +33,11 @@ public class Server {
     }
 
     public void runServer() {
+        System.out.println("Try running server");
         try {
             this.serverSocket = new ServerSocket(this.port);
+            System.out.println(Ansi.ANSI_GREEN+"Running server on "+this.serverSocket.getLocalSocketAddress()+Ansi.ANSI_RESET);
+            System.out.println("Waiting for messages");
             while(true){
                 this.socket = this.serverSocket.accept();
                 this.out = new PrintWriter(this.socket.getOutputStream(), true);
@@ -41,7 +48,7 @@ public class Server {
                 validateMessage(msgString);
                 this.socket.close();
             }       
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println(e);
         }
     }
@@ -121,10 +128,13 @@ public class Server {
     }
 
     private void sendMessage(Message<POCMessage> msg){
-        this.client.runClient();
-        System.out.println("Message sent : " + JSONConverter.toJSON(msg));
-        this.client.sendMessage(JSONConverter.toJSON(msg));
-        this.client.stopConnection();
+        if(this.client.runClient()){
+            System.out.println("Trying to send message : ");
+            System.out.println(JSONConverter.toJSON(msg));
+            if(this.client.sendMessage(JSONConverter.toJSON(msg))){
+                this.client.stopConnection();
+            }
+        }
     }
 
 }

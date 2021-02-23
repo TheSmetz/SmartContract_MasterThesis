@@ -1,5 +1,4 @@
 import java.lang.reflect.Type;
-import java.security.PublicKey;
 import java.security.Security;
 import com.google.gson.reflect.TypeToken;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
