@@ -13,6 +13,15 @@
         </excludes>
       </resource>
     </resources>
+    <dependencies>
+      <dependency>
+        <dependency>
+          <groupId>org.msgpack</groupId>
+          <artifactId>msgpack-core</artifactId>
+          <version>0.8.22</version>
+        </dependency>
+      </dependency>
+    </dependencies>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
