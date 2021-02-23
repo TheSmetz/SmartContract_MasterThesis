@@ -1,16 +1,19 @@
 package classes;
 
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
 import common.Ansi;
+import encrypt.MSGpack;
 
 public class Client {
     
     private int port;
     private String ip;
     private Socket clientSocket;
-    private PrintWriter out;
+    private OutputStream out;
+
 
     public Client(int port, String ip) {
         this.port = port;
@@ -20,7 +23,7 @@ public class Client {
     public boolean runClient() {
         try {
             this.clientSocket = new Socket(this.ip, this.port);
-            this.out = new PrintWriter(clientSocket.getOutputStream(), true);
+            this.out = clientSocket.getOutputStream();
             return true;
         } catch (Exception e) {
             System.err.println(Ansi.ANSI_RED+"Error on running client"+Ansi.ANSI_RESET);
@@ -30,7 +33,7 @@ public class Client {
 
     public boolean sendMessage(String msg) {
         try {
-            this.out.write(msg);
+            this.out.write(MSGpack.serialize(msg));
             this.out.flush();
             return true;
         } catch (Exception e) {

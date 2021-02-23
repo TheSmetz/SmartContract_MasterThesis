@@ -2,7 +2,9 @@ package classes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.Inet4Address;
@@ -13,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 
 import common.Ansi;
 import encrypt.JSONConverter;
+import encrypt.MSGpack;
 
 public class Server {
 
@@ -21,8 +24,8 @@ public class Server {
     private Socket socket;
     private Client client;
     private Contract contract;
-    private PrintWriter out;
-    private BufferedReader in;
+    private OutputStream out;
+    private InputStream in;
 
     public Server(int port) {
         this.port = port;
@@ -40,11 +43,11 @@ public class Server {
             System.out.println("Waiting for messages");
             while(true){
                 this.socket = this.serverSocket.accept();
-                this.out = new PrintWriter(this.socket.getOutputStream(), true);
-                this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+                this.out = this.socket.getOutputStream();
+                this.in = this.socket.getInputStream();
                 //Otteniamo il messaggio e lo convertiamo
                 System.out.println("Converting message into object..");
-                String msgString = this.in.readLine();
+                String msgString = MSGpack.deserialize(this.in.readAllBytes());
                 validateMessage(msgString);
                 this.socket.close();
             }       
