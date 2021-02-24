@@ -26,11 +26,9 @@ public class POCSigned extends MessageContent {
     }
 
     public static int consensus(List<POCSigned> pocSigneds){
-        byte[] hashResult = pocSigneds.get(0).getPocContent().getHashResult();
-        System.out.println("HashResult: "+hashResult);
+        int hashResult = pocSigneds.get(0).getPocContent().getHashResult();
         for (int i = 1; i < pocSigneds.size(); i++) {
-            System.out.println(pocSigneds.get(i).getPocContent().getHashResult());
-            if(!pocSigneds.get(i).getPocContent().getHashResult().equals(hashResult)){
+            if(pocSigneds.get(i).getPocContent().getHashResult()!=hashResult){
                 return pocSigneds.get(i).getPocContent().getId();
             }
         }

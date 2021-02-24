@@ -5,10 +5,10 @@ import encrypt.ECC;
 
 public class POC {
 
-    private byte[] firstPart;
+    private int firstPart;
     private Contract aContract;
     private int t;
-    private byte[] hashResult;
+    private int hashResult;
 
     private int id;
     private Integer[] w;
@@ -25,30 +25,25 @@ public class POC {
         return this.id;
     }
 
-    public byte[] getHashResult(){
+    public int getHashResult(){
         return this.hashResult;
     }
 
     public void init() {
         this.firstPart = this.generateFirstPart();
         this.hashResult = this.generateHashResult();
-        System.out.println(Ansi.ANSI_YELLOW+this.hashResult+Ansi.ANSI_RESET);
     }
 
-    private byte[] generateFirstPart() {
-        double f = this.aContract.getFunction().apply(this.w);
+    private int generateFirstPart() {
         int idPOC = this.id;
-        this.nounce = ECC.nonceGenerator();
-        String n = this.nounce;
-        Object myobj = new Object() {
-            double res = 1.0;
-            String nounce = n;
+        return new Object() {
+            double res = aContract.getFunction().apply(w);
+            String nounce = ECC.nonceGenerator();
             int id = idPOC;
-        };
-        return ECC.hash(myobj);
+        }.hashCode();
     }
 
-    private byte[] generateHashResult() {
-        return ECC.hash(this.aContract.getFunction().apply(this.w));
+    private int generateHashResult() {
+        return this.aContract.getFunction().apply(this.w).hashCode();
     }
 }

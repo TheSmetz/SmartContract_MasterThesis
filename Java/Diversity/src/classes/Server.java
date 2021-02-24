@@ -30,7 +30,7 @@ public class Server {
 
     public Server(int port) {
         this.port = port;
-        this.numberOfNodes = 2;
+        this.numberOfNodes = 3;
         //TODO ottenere numero nodi backend
     }
 
@@ -39,7 +39,7 @@ public class Server {
     }
 
     public void runServer() {
-        System.out.println("Try running server");
+        System.out.println(Ansi.ANSI_BLUE+"Try running server"+Ansi.ANSI_RESET);
         try {
             this.serverSocket = new ServerSocket(this.port);
             System.out.println(Ansi.ANSI_GREEN + "Running server on " + this.serverSocket.getLocalSocketAddress()
@@ -65,7 +65,7 @@ public class Server {
             this.socket.close();
             this.serverSocket.close();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(Ansi.ANSI_RED+"Error on stopping server"+Ansi.ANSI_RESET);
         }
     }
 
@@ -86,7 +86,6 @@ public class Server {
                     POCMessage pocMsg = new POCMessage();
                     Integer[] w = { 1, 2, 3 };
                     pocMsg.generate(port, w, 3, this.contract);
-                    System.out.println("Sending "+pocMsg.getContent().getHashResult());
                     sendMessage(new Message<POCMessage>(MessageType.PoC, pocMsg));
                 }
                 break;
@@ -105,7 +104,6 @@ public class Server {
                             sendMessage(new Message<POCMessage>(MessageType.PoC, content));
                         } else {
                             POCSigned pocs = new POCSigned();
-                            System.out.println("Mia: "+pocMessage.getmessageContent().getContent().getHashResult());
                             pocs.setPocContent(content.getContent());
                             pocs.setSignedMessage(content.getSignedMessage());
                             this.pocSigneds.add(pocs);
@@ -128,7 +126,7 @@ public class Server {
                         System.out.println(Ansi.ANSI_BLUE+"Checking Consensus"+Ansi.ANSI_RESET);
                         int res = POCSigned.consensus(this.pocSigneds);
                         if(res != -99){
-                            System.out.println(Ansi.ANSI_RED+"Opening Dispute against" + res + Ansi.ANSI_RESET);
+                            System.out.println(Ansi.ANSI_YELLOW+"Opening Dispute against" + res + Ansi.ANSI_RESET);
                         }
                     }
                 }
@@ -153,7 +151,7 @@ public class Server {
                 break;
 
             default:
-                System.out.println("Type not recognized");
+                System.out.println(Ansi.ANSI_YELLOW+"Type not recognized"+Ansi.ANSI_RESET);
                 break;
         }
     }

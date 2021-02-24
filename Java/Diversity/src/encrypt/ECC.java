@@ -107,17 +107,17 @@ public class ECC {
 		return res;
 	}
 
-	public static <T> byte[] hash(T object) {
-		byte[] digest = {};
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			md.update(toByte(object));
-			digest = md.digest();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		return digest;
-	}
+	// public static <T> byte[] hash(T object) {
+	// 	byte[] digest = {};
+	// 	try {
+	// 		MessageDigest md = MessageDigest.getInstance("SHA-256");
+	// 		md.update(toByte(object));
+	// 		digest = md.digest();
+	// 	} catch (NoSuchAlgorithmException e) {
+	// 		e.printStackTrace();
+	// 	}
+	// 	return digest;
+	// }
 
 	public static PublicKey getPublicKeyFromBytes(byte[] pubKey) {
 		X509EncodedKeySpec ks = new X509EncodedKeySpec(pubKey);
