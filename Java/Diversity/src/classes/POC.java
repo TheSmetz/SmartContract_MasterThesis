@@ -1,5 +1,6 @@
 package classes;
 
+import common.Ansi;
 import encrypt.ECC;
 
 public class POC {
@@ -7,7 +8,7 @@ public class POC {
     private byte[] firstPart;
     private Contract aContract;
     private int t;
-    private byte[] secondPart;
+    private byte[] hashResult;
 
     private int id;
     private Integer[] w;
@@ -24,9 +25,14 @@ public class POC {
         return this.id;
     }
 
+    public byte[] getHashResult(){
+        return this.hashResult;
+    }
+
     public void init() {
         this.firstPart = this.generateFirstPart();
-        this.secondPart = this.generateSecondPart();
+        this.hashResult = this.generateHashResult();
+        System.out.println(Ansi.ANSI_YELLOW+this.hashResult+Ansi.ANSI_RESET);
     }
 
     private byte[] generateFirstPart() {
@@ -42,11 +48,7 @@ public class POC {
         return ECC.hash(myobj);
     }
 
-    private byte[] generateSecondPart() {
-        Integer[] window = this.w;
-        Object myobj = new Object() {
-            Integer[] w = window;
-        };
-        return ECC.hash(myobj);
+    private byte[] generateHashResult() {
+        return ECC.hash(this.aContract.getFunction().apply(this.w));
     }
 }

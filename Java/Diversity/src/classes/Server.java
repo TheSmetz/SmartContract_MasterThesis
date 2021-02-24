@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -23,9 +25,13 @@ public class Server {
     private Contract contract;
     private OutputStream out;
     private InputStream in;
+    private List<POCSigned> pocSigneds = new ArrayList<POCSigned>();
+    private int numberOfNodes;
 
     public Server(int port) {
         this.port = port;
+        this.numberOfNodes = 2;
+        //TODO ottenere numero nodi backend
     }
 
     public void setClient(int port, String ip) {
@@ -36,22 +42,23 @@ public class Server {
         System.out.println("Try running server");
         try {
             this.serverSocket = new ServerSocket(this.port);
-            System.out.println(Ansi.ANSI_GREEN+"Running server on "+this.serverSocket.getLocalSocketAddress()+Ansi.ANSI_RESET);
+            System.out.println(Ansi.ANSI_GREEN + "Running server on " + this.serverSocket.getLocalSocketAddress()
+                    + Ansi.ANSI_RESET);
             System.out.println("Waiting for messages");
-            while(true){
+            while (true) {
                 this.socket = this.serverSocket.accept();
                 this.out = this.socket.getOutputStream();
                 this.in = this.socket.getInputStream();
                 String msgString = MSGpack.deserialize(this.in.readAllBytes());
                 validateMessage(msgString);
                 this.socket.close();
-            }       
+            }
         } catch (IOException e) {
             System.out.println(e);
         }
     }
 
-    public void stop(){
+    public void stop() {
         try {
             this.in.close();
             this.out.close();
@@ -62,72 +69,99 @@ public class Server {
         }
     }
 
-    public void validateMessage(String message){
-
+    public void validateMessage(String message) {
         GenericMessage m = JSONConverter.toObject(message, GenericMessage.class);
         Type msgType;
-        System.out.println("Received message "+m.getmessageType());
+        System.out.println("Received message " + m.getmessageType());
         switch (m.getmessageType()) {
+
             case INIT:
-                //Download contract
-                msgType = new TypeToken<Message<InitMessage>>() {}.getType();
+                // Download contract
+                msgType = new TypeToken<Message<InitMessage>>() {
+                }.getType();
                 Message<InitMessage> initMessage = JSONConverter.toObject(message, msgType);
-                if(initMessage.getmessageContent() instanceof InitMessage){
+                if (initMessage.getmessageContent() instanceof InitMessage) {
                     InitMessage content = initMessage.getmessageContent();
                     this.contract = content.getContract();
                     POCMessage pocMsg = new POCMessage();
-                    Integer[] w = {1,2,3};
+                    Integer[] w = { 1, 2, 3 };
                     pocMsg.generate(port, w, 3, this.contract);
+                    System.out.println("Sending "+pocMsg.getContent().getHashResult());
                     sendMessage(new Message<POCMessage>(MessageType.PoC, pocMsg));
                 }
                 break;
-        
+
             case PoC:
-                msgType = new TypeToken<Message<POCMessage>>() {}.getType();
+                msgType = new TypeToken<Message<POCMessage>>() {
+                }.getType();
                 Message<POCMessage> pocMessage = JSONConverter.toObject(message, msgType);
-                if(pocMessage.getmessageContent() instanceof POCMessage){
+                if (pocMessage.getmessageContent() instanceof POCMessage) {
                     POCMessage content = pocMessage.getmessageContent();
-                    if (content.verify()){
-                        if(content.getContent().getId() != this.port){
+                    if (content.verify()) {
+                        if (content.getContent().getId() != this.port) {
                             content.setPublicKeySender(ECC.getPublicKey().getEncoded());
                             content.setPrevContent(content.getSignedMessage());
                             content.setSignedMessage(ECC.encrypt(JSONConverter.toJSON(content.getSignedMessage())));
                             sendMessage(new Message<POCMessage>(MessageType.PoC, content));
                         } else {
-                            //TODO: creare POCSigned
-                            System.out.println("MIA");
+                            POCSigned pocs = new POCSigned();
+                            System.out.println("Mia: "+pocMessage.getmessageContent().getContent().getHashResult());
+                            pocs.setPocContent(content.getContent());
+                            pocs.setSignedMessage(content.getSignedMessage());
+                            this.pocSigneds.add(pocs);
+                            sendMessage(new Message<POCSigned>(MessageType.PoCSigned, pocs));
                         }
-                    }else{
+                    } else {
                         System.err.println("Error on validate signature PoC");
                     }
                 }
                 break;
 
+            case PoCSigned:
+                msgType = new TypeToken<Message<POCSigned>>() {
+                }.getType();
+                Message<POCSigned> pocSignedMessage = JSONConverter.toObject(message, msgType);
+                if (pocSignedMessage.getmessageContent() instanceof POCSigned) {
+                    POCSigned pocSigned = pocSignedMessage.getmessageContent();
+                    this.pocSigneds.add(pocSigned);
+                    if (this.pocSigneds.size() == this.numberOfNodes){
+                        System.out.println(Ansi.ANSI_BLUE+"Checking Consensus"+Ansi.ANSI_RESET);
+                        int res = POCSigned.consensus(this.pocSigneds);
+                        if(res != -99){
+                            System.out.println(Ansi.ANSI_RED+"Opening Dispute against" + res + Ansi.ANSI_RESET);
+                        }
+                    }
+                }
+                break;
+
             case AC:
-                msgType = new TypeToken<Message<ACMessage>>() {}.getType();
+                msgType = new TypeToken<Message<ACMessage>>() {
+                }.getType();
                 Message<ACMessage> acMessage = JSONConverter.toObject(message, msgType);
-                if(acMessage.getmessageContent() instanceof ACMessage){
+                if (acMessage.getmessageContent() instanceof ACMessage) {
                     ACMessage content = acMessage.getmessageContent();
                 }
                 break;
 
             case ScU:
-                msgType = new TypeToken<Message<ScUMessage>>() {}.getType();
+                msgType = new TypeToken<Message<ScUMessage>>() {
+                }.getType();
                 Message<ScUMessage> scuMessage = JSONConverter.toObject(message, msgType);
-                if(scuMessage.getmessageContent() instanceof ScUMessage){
+                if (scuMessage.getmessageContent() instanceof ScUMessage) {
                     ScUMessage content = scuMessage.getmessageContent();
                 }
                 break;
+
             default:
                 System.out.println("Type not recognized");
                 break;
         }
     }
 
-    private void sendMessage(Message<POCMessage> msg){
-        if(this.client.runClient()){
-            System.out.println(Ansi.ANSI_BLUE+"Trying to send "+msg.getmessageType()+Ansi.ANSI_RESET);
-            if(this.client.sendMessage(JSONConverter.toJSON(msg))){
+    private <T extends MessageContent> void sendMessage(Message<T> msg) {
+        if (this.client.runClient()) {
+            System.out.println(Ansi.ANSI_BLUE + "Trying to send " + msg.getmessageType() + Ansi.ANSI_RESET);
+            if (this.client.sendMessage(JSONConverter.toJSON(msg))) {
                 this.client.stopConnection();
             }
         }
