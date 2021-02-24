@@ -3,18 +3,11 @@ package encrypt;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.StringWriter;
+
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.*;
-import java.util.Base64;
-
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.ECPointUtil;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 
 public class ECC {
 
@@ -93,7 +86,7 @@ public class ECC {
 		return hash;
 	}
 
-	private static <T> byte[] toByte(T object) {
+	public static <T> byte[] toByte(T object) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream out = null;
 		byte[] res = {};

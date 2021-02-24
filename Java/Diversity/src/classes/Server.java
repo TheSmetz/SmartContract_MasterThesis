@@ -1,19 +1,16 @@
 package classes;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Type;
-import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.google.gson.reflect.TypeToken;
 
 import common.Ansi;
+import encrypt.ECC;
 import encrypt.JSONConverter;
 import encrypt.MSGpack;
 
@@ -45,8 +42,6 @@ public class Server {
                 this.socket = this.serverSocket.accept();
                 this.out = this.socket.getOutputStream();
                 this.in = this.socket.getInputStream();
-                //Otteniamo il messaggio e lo convertiamo
-                System.out.println("Converting message into object..");
                 String msgString = MSGpack.deserialize(this.in.readAllBytes());
                 validateMessage(msgString);
                 this.socket.close();
@@ -71,7 +66,7 @@ public class Server {
 
         GenericMessage m = JSONConverter.toObject(message, GenericMessage.class);
         Type msgType;
-
+        System.out.println("Received message "+m.getmessageType());
         switch (m.getmessageType()) {
             case INIT:
                 //Download contract
@@ -94,10 +89,13 @@ public class Server {
                     POCMessage content = pocMessage.getmessageContent();
                     if (content.verify()){
                         if(content.getContent().getId() != this.port){
-                            //TODO: firma
-                            System.out.println("DA FIRMARE");
+                            content.setPublicKeySender(ECC.getPublicKey().getEncoded());
+                            content.setPrevContent(content.getSignedMessage());
+                            content.setSignedMessage(ECC.encrypt(JSONConverter.toJSON(content.getSignedMessage())));
+                            sendMessage(new Message<POCMessage>(MessageType.PoC, content));
                         } else {
-                            System.out.println("Mia firma");
+                            //TODO: creare POCSigned
+                            System.out.println("MIA");
                         }
                     }else{
                         System.err.println("Error on validate signature PoC");
@@ -126,14 +124,9 @@ public class Server {
         }
     }
 
-    public int proofOfComputation(String message){
-        return Integer.parseInt(message)+1;
-    }
-
     private void sendMessage(Message<POCMessage> msg){
         if(this.client.runClient()){
-            System.out.println("Trying to send message : ");
-            System.out.println(JSONConverter.toJSON(msg));
+            System.out.println(Ansi.ANSI_BLUE+"Trying to send "+msg.getmessageType()+Ansi.ANSI_RESET);
             if(this.client.sendMessage(JSONConverter.toJSON(msg))){
                 this.client.stopConnection();
             }

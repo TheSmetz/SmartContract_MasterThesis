@@ -10,6 +10,7 @@ public class App2 {
         ECC.generateKeyPair();
 
         Server s = new Server(3333);
+        s.setClient(4444, "127.0.0.1");
         s.runServer();
     }
 }

@@ -7,7 +7,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import classes.*;
 import encrypt.ECC;
 import encrypt.JSONConverter;
-import encrypt.MSGpack;
 
 
 public class Trigger {
@@ -23,5 +22,6 @@ public class Trigger {
 
         String msg = JSONConverter.toJSON(m, msgType);
         c.sendMessage(msg);
+    
     }
 }
