@@ -19,16 +19,12 @@ public class POCMessage extends MessageContent{
         this.content = content;
     }
 
-    public POC getContent(){
-        return this.content;
-    }
-
     public boolean verify() {
         PublicKey pk = ECC.getPublicKeyFromBytes(publicKeySender);
         if(prevContent!=null){
-            return ECC.verify(pk, this.signedMessage, JSONConverter.toJSON(this.prevContent));
+            return ECC.decrypt(pk, this.signedMessage, JSONConverter.toJSON(this.prevContent));
         }else{
-            return ECC.verify(pk, this.signedMessage, JSONConverter.toJSON(content, POC.class));
+            return ECC.decrypt(pk, this.signedMessage, JSONConverter.toJSON(content, POC.class));
         }
     }
 
@@ -45,6 +41,10 @@ public class POCMessage extends MessageContent{
 
     public void setSignedMessage(byte[] sM){
         this.signedMessage = sM;
+    }
+
+    public POC getContent(){
+        return this.content;
     }
 
     public byte[] getPrevContent(){

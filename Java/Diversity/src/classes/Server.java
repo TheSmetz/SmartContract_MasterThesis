@@ -133,6 +133,7 @@ public class Server {
                 break;
 
             case AC:
+                //TODO
                 msgType = new TypeToken<Message<ACMessage>>() {
                 }.getType();
                 Message<ACMessage> acMessage = JSONConverter.toObject(message, msgType);
@@ -142,6 +143,7 @@ public class Server {
                 break;
 
             case ScU:
+                //TODO
                 msgType = new TypeToken<Message<ScUMessage>>() {
                 }.getType();
                 Message<ScUMessage> scuMessage = JSONConverter.toObject(message, msgType);

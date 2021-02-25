@@ -9,7 +9,6 @@ public class JSONConverter {
 
     public static <T> String toJSON(T entity) {
         GsonBuilder builder = new GsonBuilder();
-        //builder.setPrettyPrinting();
         Gson gson = builder.create();
         String msgJson = gson.toJson(entity);
         return msgJson;
@@ -17,7 +16,6 @@ public class JSONConverter {
 
     public static <T> String toJSON(T entity, Type t) {
         GsonBuilder builder = new GsonBuilder();
-        //builder.setPrettyPrinting();
         Gson gson = builder.create();
         String msgJson = gson.toJson(entity, t);
         return msgJson;
@@ -38,5 +36,4 @@ public class JSONConverter {
         T jsonObject = gson.fromJson(json, t);
         return jsonObject;
     }
-    
 }

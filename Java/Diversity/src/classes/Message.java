@@ -13,14 +13,6 @@ public class Message<T extends MessageContent> {
         this.messageContent = messageContent;
     }
 
-    // @Override
-    // public String toString() {
-    //     return "{" +
-    //         ", messageType='" + getmessageType() + "'" +
-    //         ", messageContent='" + getmessageContent() + "'" +
-    //         "}";
-    // }
-
     public MessageType getmessageType() {
         return this.messageType;
     }

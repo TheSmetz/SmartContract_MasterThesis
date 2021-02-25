@@ -1,9 +1,7 @@
 import java.lang.reflect.Type;
 import java.security.Security;
-
 import com.google.gson.reflect.TypeToken;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import classes.*;
 import encrypt.ECC;
 import encrypt.JSONConverter;

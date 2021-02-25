@@ -1,15 +1,11 @@
 package classes;
-
-import common.Ansi;
 import encrypt.ECC;
 
 public class POC {
-
     private int firstPart;
     private Contract aContract;
     private int t;
     private int hashResult;
-
     private int id;
     private Integer[] w;
     private String nounce; // S(t,i)
