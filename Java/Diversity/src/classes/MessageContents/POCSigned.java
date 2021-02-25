@@ -1,6 +1,9 @@
-package classes;
+package classes.MessageContents;
 
 import java.util.List;
+
+import classes.MessageContent;
+import classes.POC;
 
 public class POCSigned extends MessageContent {
     private POC pocContent;
@@ -34,6 +37,5 @@ public class POCSigned extends MessageContent {
         }
         return -99;
     }
-
 
 }

@@ -1,6 +1,9 @@
-package classes;
+package classes.MessageContents;
 
-public class InitMessage extends MessageContent{
+import classes.Contract;
+import classes.MessageContent;
+
+public class InitMessage extends MessageContent {
     
     private Contract contract;
 

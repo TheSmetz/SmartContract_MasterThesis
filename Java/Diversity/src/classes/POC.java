@@ -25,6 +25,10 @@ public class POC {
         return this.hashResult;
     }
 
+    public Contract getContract(){
+        return this.aContract;
+    }
+
     public void init() {
         this.firstPart = this.generateFirstPart();
         this.hashResult = this.generateHashResult();

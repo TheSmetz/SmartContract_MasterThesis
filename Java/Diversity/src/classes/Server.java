@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.google.gson.reflect.TypeToken;
 
+import classes.MessageContents.*;
 import common.Ansi;
 import encrypt.ECC;
 import encrypt.JSONConverter;
@@ -108,6 +109,7 @@ public class Server {
                             pocs.setSignedMessage(content.getSignedMessage());
                             this.pocSigneds.add(pocs);
                             sendMessage(new Message<POCSigned>(MessageType.PoCSigned, pocs));
+                            sendMessage(new Message<ACMessage>(MessageType.AC, new ACMessage()));
                         }
                     } else {
                         System.err.println("Error on validate signature PoC");

@@ -1,8 +1,11 @@
-package classes;
+package classes.MessageContents;
 
 import java.security.PublicKey;
 import encrypt.ECC;
 import encrypt.JSONConverter;
+import classes.MessageContent;
+import classes.POC;
+import classes.Contract;
 
 public class POCMessage extends MessageContent{
     
