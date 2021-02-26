@@ -6,6 +6,7 @@ import classes.*;
 import encrypt.ECC;
 import encrypt.JSONConverter;
 import classes.MessageContents.*;
+import storage.*;
 
 
 public class Trigger {

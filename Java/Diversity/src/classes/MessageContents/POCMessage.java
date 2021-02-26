@@ -3,6 +3,7 @@ package classes.MessageContents;
 import java.security.PublicKey;
 import encrypt.ECC;
 import encrypt.JSONConverter;
+import storage.LocalStorage;
 import classes.MessageContent;
 import classes.POC;
 import classes.Contract;
@@ -31,8 +32,8 @@ public class POCMessage extends MessageContent{
         }
     }
 
-    public void generate(int id, Integer[] w, int t, Contract aContract) {
-        this.content = new POC(id, w, t, aContract);
+    public void generate(int id, int t, Contract aContract) {
+        this.content = new POC(id, t, aContract);
         this.content.init();
         this.signedMessage = ECC.encrypt(JSONConverter.toJSON(this.content, POC.class));
         this.publicKeySender = ECC.getPublicKey().getEncoded();

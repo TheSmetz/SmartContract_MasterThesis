@@ -16,6 +16,7 @@ import common.Ansi;
 import encrypt.ECC;
 import encrypt.JSONConverter;
 import encrypt.MSGpack;
+import storage.LocalStorage;
 
 public class Server {
 
@@ -86,7 +87,8 @@ public class Server {
                     this.contract = content.getContract();
                     POCMessage pocMsg = new POCMessage();
                     Integer[] w = { 1, 2, 3 };
-                    pocMsg.generate(port, w, 3, this.contract);
+                    LocalStorage.writeFile("window", JSONConverter.toJSON(w));
+                    pocMsg.generate(port, 3, this.contract);
                     sendMessage(new Message<POCMessage>(MessageType.PoC, pocMsg));
                 }
                 break;
