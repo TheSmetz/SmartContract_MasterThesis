@@ -24,13 +24,5 @@ public class Trigger {
         Client c = new Client(4444, "127.0.0.1");
         c.runClient();
         c.sendMessage(msg);
-
-        Client c2 = new Client(3333, "127.0.0.1");
-        c2.runClient();
-        c2.sendMessage(msg);
-
-        Client c3 = new Client(2222, "127.0.0.1");
-        c3.runClient();
-        c3.sendMessage(msg);
     }
 }

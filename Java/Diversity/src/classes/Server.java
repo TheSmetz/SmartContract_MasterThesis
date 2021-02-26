@@ -32,7 +32,7 @@ public class Server {
 
     public Server(int port) {
         this.port = port;
-        this.numberOfNodes = 3;
+        this.numberOfNodes = 2;
         //TODO ottenere numero nodi backend
     }
 
@@ -111,7 +111,6 @@ public class Server {
                             pocs.setSignedMessage(content.getSignedMessage());
                             this.pocSigneds.add(pocs);
                             sendMessage(new Message<POCSigned>(MessageType.PoCSigned, pocs));
-                            sendMessage(new Message<ACMessage>(MessageType.AC, new ACMessage()));
                         }
                     } else {
                         System.err.println("Error on validate signature PoC");
@@ -125,7 +124,10 @@ public class Server {
                 Message<POCSigned> pocSignedMessage = JSONConverter.toObject(message, msgType);
                 if (pocSignedMessage.getmessageContent() instanceof POCSigned) {
                     POCSigned pocSigned = pocSignedMessage.getmessageContent();
-                    this.pocSigneds.add(pocSigned);
+                    if(pocSigned.getPocContent().getId()!=this.port){
+                        this.pocSigneds.add(pocSigned);
+                        sendMessage(pocSignedMessage);
+                    }
                     if (this.pocSigneds.size() == this.numberOfNodes){
                         System.out.println(Ansi.ANSI_BLUE+"Checking Consensus"+Ansi.ANSI_RESET);
                         int res = POCSigned.consensus(this.pocSigneds);
