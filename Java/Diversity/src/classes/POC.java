@@ -10,7 +10,6 @@ public class POC {
     private int t;
     private int hashResult;
     private int id;
-    // private Integer[] w;
 
     public POC(int id, int t, Contract aContract) {
         this.id = id;

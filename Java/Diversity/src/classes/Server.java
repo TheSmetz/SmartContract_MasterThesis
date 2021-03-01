@@ -144,7 +144,8 @@ public class Server {
                 }.getType();
                 Message<ACMessage> acMessage = JSONConverter.toObject(message, msgType);
                 if (acMessage.getmessageContent() instanceof ACMessage) {
-                    ACMessage content = acMessage.getmessageContent();
+                    ACMessage acContent = acMessage.getmessageContent();
+                    sendMessage(acMessage);
                 }
                 break;
 

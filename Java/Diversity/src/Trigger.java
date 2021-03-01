@@ -6,8 +6,6 @@ import classes.*;
 import encrypt.ECC;
 import encrypt.JSONConverter;
 import classes.MessageContents.*;
-import storage.*;
-
 
 public class Trigger {
     public static void main(String[] args) throws Exception {
@@ -17,12 +15,14 @@ public class Trigger {
         InitMessage initMessage = new InitMessage();
         Type msgType = new TypeToken<Message<InitMessage>>() {
         }.getType();
-        Message<InitMessage> m = new Message<InitMessage>(MessageType.INIT, initMessage);
+        Message<InitMessage> m = new Message<InitMessage>(MessageType.INIT,
+        initMessage);
 
         String msg = JSONConverter.toJSON(m, msgType);
-        
+
         Client c = new Client(4444, "127.0.0.1");
         c.runClient();
         c.sendMessage(msg);
+        
     }
 }

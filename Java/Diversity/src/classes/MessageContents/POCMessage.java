@@ -17,12 +17,6 @@ public class POCMessage extends MessageContent{
 
     public POCMessage() {}
 
-    public POCMessage(byte[] publicKeySender, byte[] signedMessage, POC content) {
-        this.publicKeySender = publicKeySender;
-        this.signedMessage = signedMessage;
-        this.content = content;
-    }
-
     public boolean verify() {
         PublicKey pk = ECC.getPublicKeyFromBytes(publicKeySender);
         if(prevContent!=null){
