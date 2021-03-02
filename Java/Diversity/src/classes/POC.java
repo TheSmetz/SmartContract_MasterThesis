@@ -45,9 +45,9 @@ public class POC {
         LocalStorage.writeFile("nounce", ECC.nonceGenerator());
         LocalStorage.writeFile("res", aContract.getFunction()
                 .apply(JSONConverter.toObject(LocalStorage.readFromFileByKey("window"), Integer[].class)).toString());
-        int resHash = Double.hashCode(Double.parseDouble(LocalStorage.readFromFileByKey("res")));
-        int nounceHash = LocalStorage.readFromFileByKey("nounce").hashCode();
-        return resHash * nounceHash * this.id;
+        long resHash = Double.hashCode(Double.parseDouble(LocalStorage.readFromFileByKey("res")));
+        long nounceHash = LocalStorage.readFromFileByKey("nounce").hashCode();
+        return resHash * nounceHash * (long) this.id;
     }
 
     private int generateHashResult() {

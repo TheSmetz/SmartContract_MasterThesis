@@ -26,9 +26,7 @@ public class ACMessage extends MessageContent {
     }
 
     public boolean verifyPOC(POCSigned pocSigned){
-        int hashNounce = this.content.getNounce().hashCode();
-        int hashRes = Double.hashCode(this.content.getResult());
-        long hash = Double.hashCode(this.content.getResult()) * this.content.getNounce().hashCode() * this.id;
+        long hash = (long) Double.hashCode(this.content.getResult()) * (long) this.content.getNounce().hashCode() * (long) this.id;
         if(hash==pocSigned.getPocContent().getFirstPart()){
             return true;
         }else{
