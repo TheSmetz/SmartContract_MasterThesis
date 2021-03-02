@@ -140,25 +140,25 @@ public class Server {
                 break;
 
             case AC:
-                // TODO
                 msgType = new TypeToken<Message<ACMessage>>() {
                 }.getType();
                 Message<ACMessage> acMessage = JSONConverter.toObject(message, msgType);
                 if (acMessage.getmessageContent() instanceof ACMessage) {
                     ACMessage acContent = acMessage.getmessageContent();
-                    if(!checkAgreement(acContent)){
-                        System.out.println(Ansi.ANSI_YELLOW + "Opening Dispute against" + acContent.getId() + Ansi.ANSI_RESET);
+                    if (acContent.getId() != this.port) {
+                        if (!checkAgreement(acContent)) {
+                            System.out.println(
+                                    Ansi.ANSI_YELLOW + "Opening Dispute against" + acContent.getId() + Ansi.ANSI_RESET);
+                        } else {
+                            System.out.println(Ansi.ANSI_GREEN + "POC received by " + acContent.getId() + " is valid"
+                                    + Ansi.ANSI_RESET);
+                            sendMessage(acMessage);
+                        }
+                    } else {
+                        // Genero SCU message
+                        System.out.println("Genero SCU");
                     }
-                }
-                break;
 
-            case ScU:
-                // TODO
-                msgType = new TypeToken<Message<ScUMessage>>() {
-                }.getType();
-                Message<ScUMessage> scuMessage = JSONConverter.toObject(message, msgType);
-                if (scuMessage.getmessageContent() instanceof ScUMessage) {
-                    ScUMessage content = scuMessage.getmessageContent();
                 }
                 break;
 
