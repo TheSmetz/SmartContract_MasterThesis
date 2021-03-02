@@ -11,10 +11,12 @@ import java.util.List;
 
 import com.google.gson.reflect.TypeToken;
 
+import classes.MessageContents.*;
 import common.Ansi;
 import encrypt.ECC;
 import encrypt.JSONConverter;
 import encrypt.MSGpack;
+import storage.LocalStorage;
 
 public class Server {
 
@@ -30,8 +32,8 @@ public class Server {
 
     public Server(int port) {
         this.port = port;
-        this.numberOfNodes = 3;
-        //TODO ottenere numero nodi backend
+        this.numberOfNodes = 2;
+        // TODO ottenere numero nodi backend
     }
 
     public void setClient(int port, String ip) {
@@ -39,7 +41,7 @@ public class Server {
     }
 
     public void runServer() {
-        System.out.println(Ansi.ANSI_BLUE+"Try running server"+Ansi.ANSI_RESET);
+        System.out.println(Ansi.ANSI_BLUE + "Try running server" + Ansi.ANSI_RESET);
         try {
             this.serverSocket = new ServerSocket(this.port);
             System.out.println(Ansi.ANSI_GREEN + "Running server on " + this.serverSocket.getLocalSocketAddress()
@@ -65,7 +67,7 @@ public class Server {
             this.socket.close();
             this.serverSocket.close();
         } catch (Exception e) {
-            System.out.println(Ansi.ANSI_RED+"Error on stopping server"+Ansi.ANSI_RESET);
+            System.out.println(Ansi.ANSI_RED + "Error on stopping server" + Ansi.ANSI_RESET);
         }
     }
 
@@ -85,7 +87,8 @@ public class Server {
                     this.contract = content.getContract();
                     POCMessage pocMsg = new POCMessage();
                     Integer[] w = { 1, 2, 3 };
-                    pocMsg.generate(port, w, 3, this.contract);
+                    LocalStorage.writeFile("window", JSONConverter.toJSON(w));
+                    pocMsg.generate(port, 3, this.contract);
                     sendMessage(new Message<POCMessage>(MessageType.PoC, pocMsg));
                 }
                 break;
@@ -121,39 +124,46 @@ public class Server {
                 Message<POCSigned> pocSignedMessage = JSONConverter.toObject(message, msgType);
                 if (pocSignedMessage.getmessageContent() instanceof POCSigned) {
                     POCSigned pocSigned = pocSignedMessage.getmessageContent();
-                    this.pocSigneds.add(pocSigned);
-                    if (this.pocSigneds.size() == this.numberOfNodes){
-                        System.out.println(Ansi.ANSI_BLUE+"Checking Consensus"+Ansi.ANSI_RESET);
+                    if (pocSigned.getPocContent().getId() != this.port) {
+                        this.pocSigneds.add(pocSigned);
+                        sendMessage(pocSignedMessage);
+                    } else if (this.pocSigneds.size() == this.numberOfNodes) {
+                        System.out.println(Ansi.ANSI_BLUE + "Checking Consensus" + Ansi.ANSI_RESET);
                         int res = POCSigned.consensus(this.pocSigneds);
-                        if(res != -99){
-                            System.out.println(Ansi.ANSI_YELLOW+"Opening Dispute against" + res + Ansi.ANSI_RESET);
+                        if (res != -99) {
+                            System.out.println(Ansi.ANSI_YELLOW + "Opening Dispute against" + res + Ansi.ANSI_RESET);
+                        } else {
+                            sendMessage(new Message<ACMessage>(MessageType.AC, new ACMessage(this.port)));
                         }
                     }
                 }
                 break;
 
             case AC:
-                //TODO
                 msgType = new TypeToken<Message<ACMessage>>() {
                 }.getType();
                 Message<ACMessage> acMessage = JSONConverter.toObject(message, msgType);
                 if (acMessage.getmessageContent() instanceof ACMessage) {
-                    ACMessage content = acMessage.getmessageContent();
-                }
-                break;
+                    ACMessage acContent = acMessage.getmessageContent();
+                    if (acContent.getId() != this.port) {
+                        if (!checkAgreement(acContent)) {
+                            System.out.println(
+                                    Ansi.ANSI_YELLOW + "Opening Dispute against" + acContent.getId() + Ansi.ANSI_RESET);
+                        } else {
+                            System.out.println(Ansi.ANSI_GREEN + "POC received by " + acContent.getId() + " is valid"
+                                    + Ansi.ANSI_RESET);
+                            sendMessage(acMessage);
+                        }
+                    } else {
+                        // Genero SCU message
+                        System.out.println("Genero SCU");
+                    }
 
-            case ScU:
-                //TODO
-                msgType = new TypeToken<Message<ScUMessage>>() {
-                }.getType();
-                Message<ScUMessage> scuMessage = JSONConverter.toObject(message, msgType);
-                if (scuMessage.getmessageContent() instanceof ScUMessage) {
-                    ScUMessage content = scuMessage.getmessageContent();
                 }
                 break;
 
             default:
-                System.out.println(Ansi.ANSI_YELLOW+"Type not recognized"+Ansi.ANSI_RESET);
+                System.out.println(Ansi.ANSI_YELLOW + "Type not recognized" + Ansi.ANSI_RESET);
                 break;
         }
     }
@@ -165,6 +175,16 @@ public class Server {
                 this.client.stopConnection();
             }
         }
+    }
+
+    private boolean checkAgreement(ACMessage acMessage) {
+        int id = acMessage.getId();
+        for (POCSigned pocSigned : pocSigneds) {
+            if (pocSigned.getId() == id) {
+                return acMessage.verifyPOC(pocSigned);
+            }
+        }
+        return false;
     }
 
 }

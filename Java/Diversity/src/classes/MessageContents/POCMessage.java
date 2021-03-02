@@ -1,8 +1,12 @@
-package classes;
+package classes.MessageContents;
 
 import java.security.PublicKey;
 import encrypt.ECC;
 import encrypt.JSONConverter;
+import storage.LocalStorage;
+import classes.MessageContent;
+import classes.POC;
+import classes.Contract;
 
 public class POCMessage extends MessageContent{
     
@@ -13,12 +17,6 @@ public class POCMessage extends MessageContent{
 
     public POCMessage() {}
 
-    public POCMessage(byte[] publicKeySender, byte[] signedMessage, POC content) {
-        this.publicKeySender = publicKeySender;
-        this.signedMessage = signedMessage;
-        this.content = content;
-    }
-
     public boolean verify() {
         PublicKey pk = ECC.getPublicKeyFromBytes(publicKeySender);
         if(prevContent!=null){
@@ -28,8 +26,8 @@ public class POCMessage extends MessageContent{
         }
     }
 
-    public void generate(int id, Integer[] w, int t, Contract aContract) {
-        this.content = new POC(id, w, t, aContract);
+    public void generate(int id, int t, Contract aContract) {
+        this.content = new POC(id, t, aContract);
         this.content.init();
         this.signedMessage = ECC.encrypt(JSONConverter.toJSON(this.content, POC.class));
         this.publicKeySender = ECC.getPublicKey().getEncoded();
