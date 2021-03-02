@@ -33,7 +33,7 @@ public class Server {
     public Server(int port) {
         this.port = port;
         this.numberOfNodes = 2;
-        //TODO ottenere numero nodi backend
+        // TODO ottenere numero nodi backend
     }
 
     public void setClient(int port, String ip) {
@@ -41,7 +41,7 @@ public class Server {
     }
 
     public void runServer() {
-        System.out.println(Ansi.ANSI_BLUE+"Try running server"+Ansi.ANSI_RESET);
+        System.out.println(Ansi.ANSI_BLUE + "Try running server" + Ansi.ANSI_RESET);
         try {
             this.serverSocket = new ServerSocket(this.port);
             System.out.println(Ansi.ANSI_GREEN + "Running server on " + this.serverSocket.getLocalSocketAddress()
@@ -67,7 +67,7 @@ public class Server {
             this.socket.close();
             this.serverSocket.close();
         } catch (Exception e) {
-            System.out.println(Ansi.ANSI_RED+"Error on stopping server"+Ansi.ANSI_RESET);
+            System.out.println(Ansi.ANSI_RED + "Error on stopping server" + Ansi.ANSI_RESET);
         }
     }
 
@@ -124,33 +124,36 @@ public class Server {
                 Message<POCSigned> pocSignedMessage = JSONConverter.toObject(message, msgType);
                 if (pocSignedMessage.getmessageContent() instanceof POCSigned) {
                     POCSigned pocSigned = pocSignedMessage.getmessageContent();
-                    if(pocSigned.getPocContent().getId()!=this.port){
+                    if (pocSigned.getPocContent().getId() != this.port) {
                         this.pocSigneds.add(pocSigned);
                         sendMessage(pocSignedMessage);
-                    }
-                    if (this.pocSigneds.size() == this.numberOfNodes){
-                        System.out.println(Ansi.ANSI_BLUE+"Checking Consensus"+Ansi.ANSI_RESET);
+                    } else if (this.pocSigneds.size() == this.numberOfNodes) {
+                        System.out.println(Ansi.ANSI_BLUE + "Checking Consensus" + Ansi.ANSI_RESET);
                         int res = POCSigned.consensus(this.pocSigneds);
-                        if(res != -99){
-                            System.out.println(Ansi.ANSI_YELLOW+"Opening Dispute against" + res + Ansi.ANSI_RESET);
+                        if (res != -99) {
+                            System.out.println(Ansi.ANSI_YELLOW + "Opening Dispute against" + res + Ansi.ANSI_RESET);
+                        } else {
+                            sendMessage(new Message<ACMessage>(MessageType.AC, new ACMessage(this.port)));
                         }
                     }
                 }
                 break;
 
             case AC:
-                //TODO
+                // TODO
                 msgType = new TypeToken<Message<ACMessage>>() {
                 }.getType();
                 Message<ACMessage> acMessage = JSONConverter.toObject(message, msgType);
                 if (acMessage.getmessageContent() instanceof ACMessage) {
                     ACMessage acContent = acMessage.getmessageContent();
-                    sendMessage(acMessage);
+                    if(!checkAgreement(acContent)){
+                        System.out.println(Ansi.ANSI_YELLOW + "Opening Dispute against" + acContent.getId() + Ansi.ANSI_RESET);
+                    }
                 }
                 break;
 
             case ScU:
-                //TODO
+                // TODO
                 msgType = new TypeToken<Message<ScUMessage>>() {
                 }.getType();
                 Message<ScUMessage> scuMessage = JSONConverter.toObject(message, msgType);
@@ -160,7 +163,7 @@ public class Server {
                 break;
 
             default:
-                System.out.println(Ansi.ANSI_YELLOW+"Type not recognized"+Ansi.ANSI_RESET);
+                System.out.println(Ansi.ANSI_YELLOW + "Type not recognized" + Ansi.ANSI_RESET);
                 break;
         }
     }
@@ -172,6 +175,16 @@ public class Server {
                 this.client.stopConnection();
             }
         }
+    }
+
+    private boolean checkAgreement(ACMessage acMessage) {
+        int id = acMessage.getId();
+        for (POCSigned pocSigned : pocSigneds) {
+            if (pocSigned.getId() == id) {
+                return acMessage.verifyPOC(pocSigned);
+            }
+        }
+        return false;
     }
 
 }

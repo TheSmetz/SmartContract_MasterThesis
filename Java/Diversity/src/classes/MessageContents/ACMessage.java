@@ -1,40 +1,38 @@
 package classes.MessageContents;
 
-import java.security.PublicKey;
+import java.util.Objects;
 
 import classes.AC;
 import classes.MessageContent;
-import encrypt.ECC;
-import encrypt.JSONConverter;
 
 public class ACMessage extends MessageContent {
 
     private AC content;
-    private byte[] publicKeySender;
-    private byte[] signedMessage;
-    private byte[] prevContent;
+    private int id;
 
 
-
-    public ACMessage(byte[] publicKeySender, byte[] signedMessage, AC content) {
-        this.publicKeySender = publicKeySender;
-        this.signedMessage = signedMessage;
-        this.content = content;
+    public ACMessage(int id) {
+        this.generate();
+        this.id = id;
     }
 
     public void generate() {
         this.content = new AC();
         this.content.init();
-        this.signedMessage = ECC.encrypt(JSONConverter.toJSON(this.content, AC.class));
-        this.publicKeySender = ECC.getPublicKey().getEncoded(); //TODO: not sure
     }
 
-    public boolean verify() {
-        PublicKey pk = ECC.getPublicKeyFromBytes(publicKeySender);
-        if(prevContent!=null){
-            return ECC.decrypt(pk, this.signedMessage, JSONConverter.toJSON(this.prevContent));
+    public int getId() {
+        return this.id;
+    }
+
+    public boolean verifyPOC(POCSigned pocSigned){
+        int hashNounce = this.content.getNounce().hashCode();
+        int hashRes = Double.hashCode(this.content.getResult());
+        long hash = Double.hashCode(this.content.getResult()) * this.content.getNounce().hashCode() * this.id;
+        if(hash==pocSigned.getPocContent().getFirstPart()){
+            return true;
         }else{
-            return ECC.decrypt(pk, this.signedMessage, JSONConverter.toJSON(content, AC.class));
+            return false;
         }
     }
 }

@@ -18,14 +18,15 @@ public class Trigger {
         Message<InitMessage> m = new Message<InitMessage>(MessageType.INIT,
         initMessage);
 
-        // String msg = JSONConverter.toJSON(m, msgType);
+        String msg = JSONConverter.toJSON(m, msgType);
 
-        // Client c = new Client(4444, "127.0.0.1");
-        // c.runClient();
-        // c.sendMessage(msg);
+        Client c = new Client(4444, "127.0.0.1");
+        c.runClient();
+        c.sendMessage(msg);
 
-        AC acMessage = new AC();
-        acMessage.init();
+        Client c2 = new Client(3333, "10.0.1.244");
+        c2.runClient();
+        c2.sendMessage(msg);
         
     }
 }

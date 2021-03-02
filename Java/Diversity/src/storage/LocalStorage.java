@@ -37,7 +37,6 @@ public class LocalStorage {
             FileWriter fileWriter = new FileWriter(path);
             fileWriter.write(jsonObject.toJSONString());
             fileWriter.flush();
-            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

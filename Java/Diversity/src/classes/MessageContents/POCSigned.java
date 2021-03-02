@@ -38,4 +38,8 @@ public class POCSigned extends MessageContent {
         return -99;
     }
 
+    public int getId() {
+        return this.pocContent.getId();
+    }
+
 }

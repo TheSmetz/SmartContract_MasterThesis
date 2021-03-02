@@ -5,7 +5,7 @@ import storage.LocalStorage;
 public class AC {
 
     private String nounce; // S(t,i)
-    private Double res;
+    private double res;
     //private Integer[] w;
 
     public AC() {
@@ -27,7 +27,7 @@ public class AC {
         return this.nounce;
     }
 
-    public Double getResult() {
+    public double getResult() {
         return this.res;
     }
     

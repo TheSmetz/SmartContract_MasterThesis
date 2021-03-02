@@ -1,11 +1,14 @@
 package classes;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import encrypt.ECC;
 import encrypt.JSONConverter;
 import storage.LocalStorage;
 
 public class POC {
-    private int firstPart;
+    private long firstPart;
     private Contract aContract;
     private int t;
     private int hashResult;
@@ -29,24 +32,26 @@ public class POC {
         return this.aContract;
     }
 
+    public long getFirstPart() {
+        return this.firstPart;
+    }
+
     public void init() {
         this.firstPart = this.generateFirstPart();
         this.hashResult = this.generateHashResult();
     }
 
-    private int generateFirstPart() {
-        int idPOC = this.id;
+    private long generateFirstPart() {
         LocalStorage.writeFile("nounce", ECC.nonceGenerator());
         LocalStorage.writeFile("res", aContract.getFunction()
                 .apply(JSONConverter.toObject(LocalStorage.readFromFileByKey("window"), Integer[].class)).toString());
-        return new Object() {
-            double res = Double.parseDouble(LocalStorage.readFromFileByKey("res"));
-            String nounce = LocalStorage.readFromFileByKey("nounce");
-            int id = idPOC;
-        }.hashCode();
+        int resHash = Double.hashCode(Double.parseDouble(LocalStorage.readFromFileByKey("res")));
+        int nounceHash = LocalStorage.readFromFileByKey("nounce").hashCode();
+        return resHash * nounceHash * this.id;
     }
 
     private int generateHashResult() {
-        return JSONConverter.toObject(LocalStorage.readFromFileByKey("window"), Integer[].class).hashCode();
+        Integer[] window = JSONConverter.toObject(LocalStorage.readFromFileByKey("window"), Integer[].class);
+        return Arrays.hashCode(window);
     }
 }
